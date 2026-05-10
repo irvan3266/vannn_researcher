@@ -9,13 +9,15 @@ const papers = [
 const el = id => document.getElementById(id);
 let searched = false, results = [], analysis = [];
 
-const setState = (kind, msg) => el('state').innerHTML = `<div class="state ${kind||''}">${msg}</div>`;
+const escapeHtml = (v='') => String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;').replaceAll("'",'&#39;');
+const setState = (kind, msg) => el('state').innerHTML = `<div class="state ${kind||''}">${escapeHtml(msg)}</div>`;
 const loading = () => el('state').innerHTML = `<div class="state">Searching papers...</div><div class='loader'><div class='sk'></div><div class='sk'></div><div class='sk'></div></div>`;
 
 function searchAndFilter() {
   const q = el('searchInput').value.toLowerCase().trim();
   const yearMin = Number(el('yearMin').value || 0);
   const citationMin = Number(el('citationMin').value || 0);
+  const relevanceMin = Number(el('relevanceMin').value || 0);
   const docType = el('docType').value;
   const field = el('field').value;
   const openOnly = el('openAccessOnly').checked;
@@ -24,7 +26,7 @@ function searchAndFilter() {
 
   let list = papers.filter(p =>
     (!q || `${p.title} ${p.authors.join(' ')} ${p.journal}`.toLowerCase().includes(q)) &&
-    p.year >= yearMin && p.citationCount >= citationMin &&
+    p.year >= yearMin && p.citationCount >= citationMin && p.relevance >= relevanceMin &&
     (!docType || p.type === docType) && (!field || p.field === field) &&
     (!openOnly || p.openAccess) && (!pdfOnly || !!p.pdfUrl)
   );
@@ -45,11 +47,12 @@ function renderResults() {
   if (!results.length) { t.innerHTML=''; return setState('error','No open-access PDF papers found. Try another keyword.'); }
   el('state').innerHTML = '';
   t.innerHTML = `<thead><tr><th>No</th><th>Judul Paper</th><th>Penulis</th><th>Tahun</th><th>Sumber / Jurnal</th><th>Jumlah Sitasi</th><th>Link PDF</th><th>Format Sitasi APA</th><th>Add to Analysis</th></tr></thead><tbody>${results.map((p,i)=>
-    `<tr><td>${i+1}</td><td><button class='btn ghost' data-detail='${i}'>${p.title}</button></td><td>${p.authors.join(', ')}</td><td>${p.year}</td><td>${p.journal}</td><td><span class='badge'>${p.citationCount}</span></td><td><a target='_blank' href='${p.pdfUrl}'>PDF</a></td><td>${p.apaCitation}</td><td><button class='btn' data-add='${p.doi}'>Add to Analysis</button></td></tr>`).join('')}</tbody>`;
+    `<tr><td>${i+1}</td><td><button class='btn ghost' data-detail='${i}'>${escapeHtml(p.title)}</button></td><td>${escapeHtml(p.authors.join(', '))}</td><td>${p.year}</td><td>${escapeHtml(p.journal)}</td><td><span class='badge'>${p.citationCount}</span></td><td><a target='_blank' rel='noopener noreferrer' href='${p.pdfUrl}'>PDF</a></td><td>${escapeHtml(p.apaCitation)}</td><td><button class='btn' data-add='${p.doi}'>Add to Analysis</button></td></tr>`).join('')}</tbody>`;
 }
 
 function renderTopCards() {
-  el('topCards').innerHTML = results.slice(0,3).map(p => `<article class='card'><h3>${p.title}</h3><p>${p.authors.join(', ')} • ${p.year} • Citations: ${p.citationCount}</p><p><b>Ringkasan:</b> ${p.tldr}</p><p><b>Alasan relevan:</b> Tingkat relevansi tinggi, jumlah sitasi kuat, dan PDF tersedia.</p><a target='_blank' href='${p.pdfUrl}'>Open PDF</a></article>`).join('');
+  if (!results.length) { el('topCards').innerHTML = `<div class='state'>Belum ada ringkasan. Lakukan pencarian terlebih dahulu.</div>`; return; }
+  el('topCards').innerHTML = results.slice(0,3).map(p => `<article class='card'><h3>${escapeHtml(p.title)}</h3><p>${escapeHtml(p.authors.join(', '))} • ${p.year} • Citations: ${p.citationCount}</p><p><b>Ringkasan:</b> ${escapeHtml(p.tldr)}</p><p><b>Alasan relevan:</b> Tingkat relevansi tinggi, jumlah sitasi kuat, dan PDF tersedia.</p><a target='_blank' rel='noopener noreferrer' href='${p.pdfUrl}'>Open PDF</a></article>`).join('');
 }
 
 function renderAnalysis() {
@@ -64,7 +67,7 @@ function showDetail(p){
 function runSearch(){ searched = true; loading(); setTimeout(()=>{ results = searchAndFilter(); renderResults(); renderTopCards(); }, 650); }
 
 el('searchBtn').onclick = runSearch;
-['yearMin','docType','field','citationMin','sort','openAccessOnly','pdfOnly'].forEach(id => el(id).addEventListener('change', () => searched && runSearch()));
+['yearMin','docType','field','citationMin','relevanceMin','sort','openAccessOnly','pdfOnly'].forEach(id => el(id).addEventListener('change', () => searched && runSearch()));
 el('resultTable').addEventListener('click', (e)=>{
   const detailI = e.target.dataset.detail;
   const add = e.target.dataset.add;
@@ -92,8 +95,19 @@ el('exportApa').onclick = ()=>{
 el('copySummary').onclick = async ()=>{
   if (!results.length) return;
   const top = results.slice(0,3).map((p,i)=>`${i+1}. ${p.title}\n${p.tldr}`).join('\n\n');
-  await navigator.clipboard.writeText(top); alert('Top 3 summary copied.');
+  try {
+    await navigator.clipboard.writeText(top);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = top;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+  }
+  alert('Top 3 summary copied.');
 };
 
 renderResults();
+renderTopCards();
 renderAnalysis();
