@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vannn Researcher</title>
+  <style>
+    :root {
+      --bg: #f7f6f1;
+      --ink: #0f172a;
+      --accent: #facc15;
+      --accent-2: #22d3ee;
+      --danger: #ef4444;
+      --ok: #22c55e;
+      --line: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    .container { width: min(1200px, 94%); margin: 0 auto; }
+    .brutal {
+      border: 3px solid var(--line);
+      box-shadow: 6px 6px 0 var(--line);
+      background: #fff;
+      border-radius: 10px;
+    }
+    .btn {
+      border: 3px solid var(--line);
+      box-shadow: 4px 4px 0 var(--line);
+      background: var(--accent);
+      color: var(--ink);
+      font-weight: 800;
+      padding: .65rem .95rem;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    .btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--line); }
+    .btn.secondary { background: var(--accent-2); }
+    .btn.ghost { background: #fff; }
+    nav {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg);
+      border-bottom: 3px solid var(--line);
+    }
+    .nav-inner { display:flex; align-items:center; justify-content:space-between; padding: .8rem 0; }
+    .logo { font-size: 1.35rem; font-weight: 900; letter-spacing: .3px; }
+    .menu { display:flex; gap:1rem; font-weight: 700; font-size:.95rem; }
+    .menu a { color: inherit; text-decoration: none; }
+
+    .hero { margin-top: 1.2rem; padding: 1.2rem; }
+    h1 { margin: 0 0 .4rem; font-size: clamp(1.8rem, 4vw, 3rem); line-height:1.05; font-weight:900; }
+    .subtitle { margin:0; font-size:1.03rem; font-weight:600; }
+    .search-row { margin-top: 1rem; display:flex; gap:.6rem; flex-wrap: wrap; }
+    input, select {
+      border: 3px solid var(--line);
+      border-radius: 10px;
+      padding: .62rem .7rem;
+      font-size: .95rem;
+      font-weight: 650;
+      background: #fff;
+    }
+    #searchInput { flex:1; min-width:230px; }
+
+    .section { margin: 1.2rem 0; padding: 1rem; }
+    .section h2 { margin:0 0 .8rem; font-size:1.2rem; font-weight:900; }
+
+    .filters { display:grid; gap:.7rem; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); }
+    .filter-check { display:flex; align-items:center; gap:.4rem; font-weight:700; }
+
+    table { width:100%; border-collapse: collapse; font-size: .9rem; }
+    th, td { border: 2px solid var(--line); padding: .45rem; vertical-align: top; }
+    th { background:#dbeafe; text-align:left; font-weight:900; }
+
+    .badge { display:inline-block; padding:.15rem .45rem; border:2px solid var(--line); border-radius:999px; font-weight:800; background:#fde68a; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:.8rem; }
+    .card { padding:.85rem; }
+    .muted { color:#334155; font-size:.88rem; }
+    .empty, .error, .loading { font-weight: 800; padding:1rem; border:3px dashed var(--line); border-radius:10px; }
+    .error { background: #fecaca; }
+
+    .loader { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.8rem; }
+    .skeleton { height:125px; border:3px solid var(--line); border-radius:10px; background:linear-gradient(110deg,#f3f4f6 8%,#e5e7eb 18%,#f3f4f6 33%); background-size:200% 100%; animation:shine 1.2s linear infinite; }
+    @keyframes shine { to { background-position-x:-200%; } }
+
+    dialog { width:min(900px,95vw); border:none; padding:0; background:transparent; }
+    .modal { padding:1rem; max-height:86vh; overflow:auto; }
+    .modal h3 { margin-top:0; }
+
+    footer { margin:2rem 0 1rem; text-align:center; font-weight:700; }
+
+    @media(max-width:720px){ .menu{display:none;} th,td{font-size:.8rem;} }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <div class="logo">Vannn Researcher</div>
+      <div class="menu">
+        <a href="#search">Search</a>
+        <a href="#top">Top Papers</a>
+        <a href="#analysis">Analysis Table</a>
+        <a href="#about">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="hero brutal" id="search">
+      <h1>Find Open Access Research Faster</h1>
+      <p class="subtitle">Search journals, articles, and books with PDFs, summaries, citations, and structured research insights.</p>
+      <div class="search-row">
+        <input id="searchInput" placeholder="Contoh: AI in education" />
+        <button id="searchBtn" class="btn">Search</button>
+      </div>
+    </section>
+
+    <section class="section brutal">
+      <h2>Filter Pencarian</h2>
+      <div class="filters">
+        <input id="yearFilter" placeholder="Tahun min (contoh 2020)" type="number" />
+        <select id="typeFilter"><option value="">Semua Tipe</option><option>Journal Article</option><option>Conference Paper</option><option>Book</option><option>Review Paper</option></select>
+        <select id="fieldFilter"><option value="">Semua Bidang</option><option>Computer Science</option><option>Education</option><option>Healthcare</option><option>Environmental Science</option></select>
+        <select id="sortFilter"><option>Most Relevant</option><option>Most Cited</option><option>Newest</option><option>Oldest</option></select>
+        <input id="citationMin" type="number" placeholder="Sitasi minimal" />
+      </div>
+      <div class="search-row" style="margin-top:.7rem">
+        <label class="filter-check"><input id="openOnly" type="checkbox" checked /> Open Access Only</label>
+        <label class="filter-check"><input id="pdfOnly" type="checkbox" checked /> PDF Available</label>
+      </div>
+    </section>
+
+    <section class="section brutal">
+      <h2>Search Results</h2>
+      <div class="search-row" style="margin-bottom:.6rem">
+        <button class="btn secondary" id="csvBtn">Export Table to CSV</button>
+        <button class="btn secondary" id="apaBtn">Export APA Citations</button>
+        <button class="btn ghost" id="copySummaryBtn">Copy Summary</button>
+      </div>
+      <div id="state"></div>
+      <div style="overflow:auto"><table id="resultTable"></table></div>
+    </section>
+
+    <section class="section brutal" id="top">
+      <h2>Top 3 Paper Summary</h2>
+      <div class="cards" id="topCards"></div>
+    </section>
+
+    <section class="section brutal" id="analysis">
+      <h2>Analysis Table (maks 5 paper)</h2>
+      <div style="overflow:auto"><table id="analysisTable"></table></div>
+    </section>
+
+    <section class="section brutal" id="about">
+      <h2>About</h2>
+      <p class="muted">Vannn Researcher adalah prototipe pencarian literatur akademik open-access dengan gaya brutalism. Data saat ini menggunakan dummy dataset untuk simulasi pengalaman seperti Scite AI / Elicit.</p>
+    </section>
+  </main>
+
+  <dialog id="detailDialog"><div class="modal brutal" id="detailContent"></div></dialog>
+  <footer>© 2026 Vannn Researcher</footer>
+
+<script>
+const papers = [
+  {title:"AI-Powered Adaptive Learning Systems in Higher Education",authors:["N. Patel","R. Suryanto"],year:2024,journal:"Journal of Educational AI",citationCount:132,doi:"10.1000/jeai.2024.001",pdfUrl:"https://example.org/paper1.pdf",apaCitation:"Patel, N., & Suryanto, R. (2024). AI-powered adaptive learning systems in higher education. Journal of Educational AI, 12(1), 1-20. https://doi.org/10.1000/jeai.2024.001",abstract:"This study evaluates adaptive AI tutoring systems...",tldr:"Adaptive AI significantly improves retention and engagement.",conclusions:"AI personalization boosts outcomes but requires ethical safeguards.",summarizedAbstract:"Adaptive tools tailored to student pace improve outcomes.",results:"+18% average exam score and +25% engagement.",summarizedIntroduction:"Higher education needs scalable personalization.",methodsUsed:"Quasi-experimental design, 8 universities.",literatureSurvey:"Builds on intelligent tutoring and LMS analytics research.",limitations:"Limited to STEM courses.",contributions:"Practical framework for adaptive AI deployment.",practicalImplications:"Can reduce dropout and improve personalization.",objectives:"Assess effectiveness of AI adaptive platforms.",findings:"Strong performance gains and positive student feedback.",type:"Journal Article",field:"Education",openAccess:true,relevance:94},
+  {title:"Machine Learning for Early Disease Detection in Rural Healthcare",authors:["A. Gomez","L. Chen"],year:2023,journal:"Open Healthcare Informatics",citationCount:210,doi:"10.1000/ohi.2023.145",pdfUrl:"https://example.org/paper2.pdf",apaCitation:"Gomez, A., & Chen, L. (2023). Machine learning for early disease detection in rural healthcare. Open Healthcare Informatics, 9(2), 44-67. https://doi.org/10.1000/ohi.2023.145",abstract:"We present classification pipelines...",tldr:"ML models improve early diagnosis in low-resource settings.",conclusions:"Hybrid models balanced accuracy and interpretability.",summarizedAbstract:"A rural dataset showed ML can flag risk cases early.",results:"AUC 0.89 with explainable boosting model.",summarizedIntroduction:"Rural clinics need low-cost triage tools.",methodsUsed:"Gradient boosting + SHAP interpretability.",literatureSurvey:"Reviews digital health and predictive diagnostics.",limitations:"Regional dataset only.",contributions:"Deployable diagnostic workflow with transparency.",practicalImplications:"Supports clinicians in triage and referral decisions.",objectives:"Develop robust early-detection ML for rural clinics.",findings:"Accuracy gains with clinician trust signals.",type:"Conference Paper",field:"Healthcare",openAccess:true,relevance:96},
+  {title:"Climate Change Policy Mixes and Emission Outcomes: A Meta-Review",authors:["D. Liu","M. Rahman"],year:2022,journal:"Policy & Environment Review",citationCount:178,doi:"10.1000/per.2022.455",pdfUrl:"https://example.org/paper3.pdf",apaCitation:"Liu, D., & Rahman, M. (2022). Climate change policy mixes and emission outcomes: A meta-review. Policy & Environment Review, 14(4), 201-239. https://doi.org/10.1000/per.2022.455",abstract:"Meta-review across 120 studies...",tldr:"Combined carbon pricing + innovation subsidies work best.",conclusions:"Policy mix design matters more than single instruments.",summarizedAbstract:"This meta-review compares outcomes from policy combinations.",results:"Median emission reduction 11-17% in mixed-policy designs.",summarizedIntroduction:"Single-policy interventions often underperform.",methodsUsed:"Systematic review + meta-synthesis.",literatureSurvey:"Synthesizes economics and governance studies.",limitations:"Publication bias risk.",contributions:"Comparative matrix for policy instruments.",practicalImplications:"Governments should combine pricing with transition support.",objectives:"Identify highest-impact policy combinations.",findings:"Balanced policy portfolios outperform isolated mandates.",type:"Review Paper",field:"Environmental Science",openAccess:true,relevance:91},
+  {title:"Open Access Monograph: Foundations of Reproducible Data Science",authors:["J. Meyer"],year:2021,journal:"Open Science Books",citationCount:89,doi:"10.1000/osb.2021.088",pdfUrl:"https://example.org/book1.pdf",apaCitation:"Meyer, J. (2021). Foundations of reproducible data science. Open Science Books. https://doi.org/10.1000/osb.2021.088",abstract:"A practical open-access book...",tldr:"Reproducibility workflows increase research reliability.",conclusions:"Versioning and transparent pipelines are essential.",summarizedAbstract:"Book explains tools for robust reproducible science.",results:"Case studies reduce reproducibility errors by 30%.",summarizedIntroduction:"Reproducibility crisis motivates better methods.",methodsUsed:"Tutorial-based method chapters.",literatureSurvey:"Summarizes open-science standards.",limitations:"Focuses mainly on Python ecosystem.",contributions:"Comprehensive OA reference for reproducible workflows.",practicalImplications:"Useful for labs and graduate training.",objectives:"Teach practical reproducibility.",findings:"Standardized workflows improve trustworthiness.",type:"Book",field:"Computer Science",openAccess:true,relevance:85},
+  {title:"Explainable AI in Clinical Decision Support: A Comparative Study",authors:["S. Khan","P. Irawan","B. Silva"],year:2025,journal:"Journal of Clinical AI",citationCount:67,doi:"10.1000/jcai.2025.501",pdfUrl:"https://example.org/paper5.pdf",apaCitation:"Khan, S., Irawan, P., & Silva, B. (2025). Explainable AI in clinical decision support: A comparative study. Journal of Clinical AI, 3(1), 10-34. https://doi.org/10.1000/jcai.2025.501",abstract:"Comparison of explainability methods in clinical workflows...",tldr:"Counterfactual explanations improved clinician acceptance.",conclusions:"Explainability is critical for safe adoption.",summarizedAbstract:"Study evaluates XAI methods for clinical support systems.",results:"Trust score +31% with counterfactual interface.",summarizedIntroduction:"Clinical AI needs transparency and accountability.",methodsUsed:"User study with 94 clinicians.",literatureSurvey:"Covers XAI and health informatics research.",limitations:"Short trial period.",contributions:"Benchmark for XAI usability in hospitals.",practicalImplications:"Can accelerate safe AI integration.",objectives:"Compare explainability techniques in clinical settings.",findings:"Counterfactual + feature attribution performed best.",type:"Journal Article",field:"Healthcare",openAccess:true,relevance:93}
+];
+
+let results = []; let selected = []; let searched = false;
+const state = document.getElementById('state');
+
+function renderState(type,msg){ state.innerHTML = `<div class="${type}">${msg}</div>`; }
+function loading(){ state.innerHTML = `<div class="loading">Searching papers...</div><div class="loader"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>`; }
+
+function applyFilters(query){
+  const yearMin = Number(document.getElementById('yearFilter').value || 0);
+  const type = document.getElementById('typeFilter').value;
+  const field = document.getElementById('fieldFilter').value;
+  const citationMin = Number(document.getElementById('citationMin').value || 0);
+  const openOnly = document.getElementById('openOnly').checked;
+  const pdfOnly = document.getElementById('pdfOnly').checked;
+  const sort = document.getElementById('sortFilter').value;
+
+  let data = papers.filter(p =>
+    (!query || `${p.title} ${p.authors.join(' ')} ${p.journal}`.toLowerCase().includes(query.toLowerCase())) &&
+    p.year >= yearMin && (!type || p.type===type) && (!field || p.field===field) &&
+    p.citationCount >= citationMin && (!openOnly || p.openAccess) && (!pdfOnly || !!p.pdfUrl)
+  );
+
+  if(sort==='Most Cited') data.sort((a,b)=>b.citationCount-a.citationCount);
+  else if(sort==='Newest') data.sort((a,b)=>b.year-a.year);
+  else if(sort==='Oldest') data.sort((a,b)=>a.year-b.year);
+  else data.sort((a,b)=>b.relevance-a.relevance);
+  return data;
+}
+
+function renderResults(){
+  const table = document.getElementById('resultTable');
+  if(!searched){ table.innerHTML=''; renderState('empty','Search open-access papers, articles, and books with PDF availability.'); return; }
+  if(results.length===0){ table.innerHTML=''; renderState('error','No open-access PDF papers found. Try another keyword.'); return; }
+  state.innerHTML='';
+  table.innerHTML = `<thead><tr><th>No</th><th>Judul Paper</th><th>Penulis</th><th>Tahun</th><th>Sumber / Jurnal</th><th>Jumlah Sitasi</th><th>Link PDF</th><th>Format Sitasi APA</th><th>Aksi</th></tr></thead><tbody>$${results.map((p,i)=>`<tr>
+    <td>${i+1}</td><td><button class='btn ghost' onclick='showDetail(${JSON.stringify(p.title)})'>${p.title}</button></td>
+    <td>${p.authors.join(', ')}</td><td>${p.year}</td><td>${p.journal}</td><td><span class='badge'>${p.citationCount}</span></td>
+    <td><a href='${p.pdfUrl}' target='_blank'>PDF</a></td><td>${p.apaCitation}</td>
+    <td><button class='btn' onclick='addAnalysis(${JSON.stringify(p.title)})'>Add to Analysis</button></td></tr>`).join('')}</tbody>`.replace('$','');
+}
+
+function renderTop3(){
+  const top = results.slice(0,3);
+  const box = document.getElementById('topCards');
+  box.innerHTML = top.map(p=>`<article class='card brutal'>
+    <h3>${p.title}</h3>
+    <p class='muted'>${p.authors.join(', ')} • ${p.year} • Citations: ${p.citationCount}</p>
+    <p><strong>Ringkasan:</strong> ${p.tldr}</p>
+    <p><strong>Kenapa relevan:</strong> Topik sesuai keyword, sitasi tinggi, dan PDF tersedia.</p>
+    <a href='${p.pdfUrl}' target='_blank'>Open PDF</a>
+  </article>`).join('');
+}
+
+function addAnalysis(title){
+  const p = papers.find(x=>x.title===title);
+  if(selected.find(x=>x.title===title)) return;
+  if(selected.length>=5){ alert('Maksimal 5 paper pada analysis table.'); return; }
+  selected.push(p); renderAnalysis();
+}
+function renderAnalysis(){
+  const t = document.getElementById('analysisTable');
+  t.innerHTML = `<thead><tr><th>Title</th><th>APA Citation</th><th>TL;DR</th><th>Conclusions</th><th>Summarized Abstract</th><th>Results</th><th>Summarized Introduction</th><th>Methods Used</th><th>Literature Survey</th><th>Limitations</th><th>Contributions</th><th>Practical Implications</th><th>Objectives</th><th>Findings</th></tr></thead><tbody>${selected.map(p=>`<tr><td>${p.title}</td><td>${p.apaCitation}</td><td>${p.tldr}</td><td>${p.conclusions}</td><td>${p.summarizedAbstract}</td><td>${p.results}</td><td>${p.summarizedIntroduction}</td><td>${p.methodsUsed}</td><td>${p.literatureSurvey}</td><td>${p.limitations}</td><td>${p.contributions}</td><td>${p.practicalImplications}</td><td>${p.objectives}</td><td>${p.findings}</td></tr>`).join('')}</tbody>`;
+}
+function showDetail(title){
+  const p = papers.find(x=>x.title===title);
+  const c = document.getElementById('detailContent');
+  c.innerHTML = `<h3>${p.title}</h3><p><strong>Author:</strong> ${p.authors.join(', ')} | <strong>Tahun:</strong> ${p.year} | <strong>DOI:</strong> ${p.doi}</p>
+  <p><strong>Journal/Publisher:</strong> ${p.journal} | <strong>Citation count:</strong> ${p.citationCount}</p>
+  <p><strong>Abstract asli:</strong> ${p.abstract}</p><p><strong>Summarized Abstract:</strong> ${p.summarizedAbstract}</p><p><strong>Introduction Summary:</strong> ${p.summarizedIntroduction}</p><p><strong>Methodology:</strong> ${p.methodsUsed}</p><p><strong>Results:</strong> ${p.results}</p><p><strong>Conclusion:</strong> ${p.conclusions}</p><p><strong>Limitations:</strong> ${p.limitations}</p><p><strong>Contributions:</strong> ${p.contributions}</p><p><strong>Practical Implications:</strong> ${p.practicalImplications}</p><p><strong>APA Citation:</strong> ${p.apaCitation}</p><p><a href='${p.pdfUrl}' target='_blank'>Link PDF</a></p><button class='btn' onclick='detailDialog.close()'>Close</button>`;
+  detailDialog.showModal();
+}
+
+function runSearch(){
+  searched = true;
+  loading();
+  setTimeout(()=>{ results = applyFilters(document.getElementById('searchInput').value); renderResults(); renderTop3(); }, 700);
+}
+
+['searchBtn','sortFilter','yearFilter','typeFilter','fieldFilter','citationMin','openOnly','pdfOnly'].forEach(id=>{
+  document.getElementById(id).addEventListener(id==='searchBtn'?'click':'change', ()=>{ if(searched) runSearch(); });
+});
+
+document.getElementById('csvBtn').onclick = ()=>{
+  if(!results.length) return;
+  const rows = [['title','authors','year','journal','citationCount','pdfUrl','apaCitation'], ...results.map(p=>[p.title,p.authors.join('; '),p.year,p.journal,p.citationCount,p.pdfUrl,p.apaCitation])];
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download='vannn-results.csv'; a.click();
+};
+document.getElementById('apaBtn').onclick = ()=>{
+  if(!results.length) return;
+  const txt = results.map(p=>p.apaCitation).join('\n');
+  const a = document.createElement('a'); a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'})); a.download='apa-citations.txt'; a.click();
+};
+document.getElementById('copySummaryBtn').onclick = async ()=>{
+  const txt = results.slice(0,3).map((p,i)=>`${i+1}. ${p.title}\n${p.tldr}\n`).join('\n');
+  if(!txt) return; await navigator.clipboard.writeText(txt); alert('Top 3 summary copied.');
+};
+
+renderResults(); renderAnalysis();
+</script>
+</body>
+</html>
