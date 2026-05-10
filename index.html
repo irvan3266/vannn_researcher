@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vannn Researcher</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="logo">Vannn Researcher</div>
+      <div class="menu">
+        <a href="#search">Search</a><a href="#top">Top Papers</a><a href="#analysis">Analysis Table</a><a href="#about">About</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="panel" id="search">
+      <h1>Find Open Access Research Faster</h1>
+      <p>Search journals, articles, and books with PDFs, summaries, citations, and structured research insights.</p>
+      <div class="row">
+        <input id="searchInput" placeholder="AI in education / machine learning healthcare / climate change policy" />
+        <button id="searchBtn" class="btn">Search</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Filter Pencarian</h2>
+      <div class="grid">
+        <input id="yearMin" type="number" placeholder="Tahun publikasi minimum" />
+        <select id="docType"><option value="">Semua jenis dokumen</option><option>Journal Article</option><option>Conference Paper</option><option>Book</option><option>Review Paper</option></select>
+        <select id="field"><option value="">Semua bidang</option><option>Computer Science</option><option>Education</option><option>Healthcare</option><option>Environmental Science</option></select>
+        <input id="citationMin" type="number" placeholder="Jumlah sitasi minimum" />
+        <select id="sort"><option>Most Relevant</option><option>Most Cited</option><option>Newest</option><option>Oldest</option></select>
+      </div>
+      <div class="row checks">
+        <label><input id="openAccessOnly" type="checkbox" checked /> Open Access Only</label>
+        <label><input id="pdfOnly" type="checkbox" checked /> PDF Available</label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Search Results</h2>
+      <div class="row">
+        <button id="exportCsv" class="btn alt">Export Table to CSV</button>
+        <button id="exportApa" class="btn alt">Export APA Citations</button>
+        <button id="copySummary" class="btn ghost">Copy Summary</button>
+      </div>
+      <div id="state"></div>
+      <div class="table-wrap"><table id="resultTable"></table></div>
+    </section>
+
+    <section class="panel" id="top">
+      <h2>Top 3 Paper Summary</h2>
+      <div id="topCards" class="cards"></div>
+    </section>
+
+    <section class="panel" id="analysis">
+      <h2>Analysis Table (maksimal 5 paper)</h2>
+      <div class="table-wrap"><table id="analysisTable"></table></div>
+    </section>
+
+    <section class="panel" id="about">
+      <h2>About</h2>
+      <p>Vannn Researcher adalah aplikasi pencarian literatur akademik open-access bergaya brutalism dengan data dummy untuk prototipe awal.</p>
+    </section>
+  </main>
+
+  <dialog id="paperDialog"><article id="paperDetail" class="panel"></article></dialog>
+  <footer>© 2026 Vannn Researcher</footer>
+  <script src="app.js"></script>
+</body>
+</html>
